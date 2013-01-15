@@ -45,6 +45,10 @@ define(['kickstart', 'module', 'path', 'fs'], function (kickstart, module, path,
   srv.all('/example-walkLED.html', function(req, res) {
     res.render('example-walkLED', {jsApp: 'walkLED', active: 'examples', title: 'noduino', 'examples': examples});
   });
+
+  srv.all('/display.html', function(req, res) {
+    res.render('display', {jsApp: 'none', active: 'examples', title: 'noduino', 'examples': examples});
+  });
   
   return {'kickstart': kickstart, 'srv': srv};
 });

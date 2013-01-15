@@ -3,6 +3,7 @@ var pl = 'scripts/libs/';
 require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl + 'Noduino.Socket.js', pl + 'Logger.HTML.js'], function($, dd, p, NoduinoObj, Connector, Logger) {
   var Noduino = null;
 
+
   var walkLED = {
     listLED: [],
     listButton: {},
@@ -81,6 +82,7 @@ require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl
     board.withButton({pin:  4}, function(err, Button) { addButton(Button); $('#btn-04').click(function(e) {e.preventDefault(); Button.setOn(); Button.setOff(); }); });
     board.withAnalogInput({pin:  'A0'}, function(err, AnalogInput) { 
       AnalogInput.on('change', function(a) { 
+        console.log('yeeees');
         $('#interval-slide').val(a.value);
         $('#interval-value').val(a.value + 'ms');
         walkLED.interval = a.value; startSequence(walkLED.direction, walkLED.interval); 
