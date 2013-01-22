@@ -12,12 +12,13 @@ void loop() {
   /**
    * Waiting for commands
    */
-  while(Serial.available() > 0) {
-    char x = Serial.read();
-    if (x == '!') index = 0;      // start
-    else if (x == '.') process(); // end
-    else messageBuffer[index++] = x;
-  }
+  // while(Serial.available() > 0) {
+  //   char x = Serial.read();
+  //   if (x == '!') index = 0;      // start
+  //   else if (x == '.') process(); // end
+  //   else messageBuffer[index++] = x;
+  // }
+  ar("A0");
 }
 
 /**
