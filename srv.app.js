@@ -39,6 +39,9 @@ define(['kickstart', 'module', 'path', 'fs'], function (kickstart, module, path,
     res.render('getting-started', {jsApp: 'none', active: 'getting-started', title: 'noduino', 'examples': examples});
   });
 
+  srv.all('/display.html', function(req, res) {
+    res.render('display', {jsApp: 'none', active: 'display', title: 'noduino', 'examples': examples});
+  });
   /** 
    * Catch request for serving walkLED example page
    */
@@ -53,6 +56,12 @@ define(['kickstart', 'module', 'path', 'fs'], function (kickstart, module, path,
     res.render('oscilloscope', {jsApp: 'oscilloscope', title: 'oscilloscope', layout: null});
   });
 
+  /** 
+   * Catch request for serving display page
+   */
+  srv.all('/display.html', function(req, res) {
+    res.render('display', {jsApp: 'none', active: 'examples', title: 'noduino', 'examples': examples});
+  });
   
   return {'kickstart': kickstart, 'srv': srv};
 });

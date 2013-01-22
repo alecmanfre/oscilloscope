@@ -76,7 +76,7 @@ define(function(require, exports, module) {
     var that = this;
     setInterval(function () {
       that.current().analogRead(AnalogInput.pin);
-    }, 50);
+    }, 1);
   
     this.current().on('data', function(m) {
       m = m.split('::');
