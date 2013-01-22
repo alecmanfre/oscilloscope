@@ -46,26 +46,47 @@ require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl
   var createObjects = function(board) {
     var self = this;
     board.withAnalogInput({pin:  'A0'}, function(err, AnalogInput) { 
-      AnalogInput.on('change', function(a) { 
-        $('#interval-slide').val(a.value);
+      AnalogInput.on('change', function(a) {
         self.addData(a.value);
       });
     });
     
     this.lastx = window.period;
-    this.cycle = [];
+    this.cycles = [];
+    window.cycles = this.cycles;
     this.nextCycle = [];
     this.addData = function(y) {
       var x = Date.now() % window.period;
-      if (x > self.lastx) {
-        self.nextCycle.push(y);
+      console.log(x);
+      if (x >= self.lastx) {
+        self.nextCycle.push({x: x, y: y});
       } else {
-        self.cycle = self.nextCycle;
-        self.nextCycle = [y];
-        console.log('cycle length: ' + self.cycle.length);
+        self.cycles.push(self.nextCycle);
+        console.log('cycle length: ' + self.nextCycle.length);
+        if (self.cycles.length >= 10) {
+          self.cycles.shift();
+        }
+        self.nextCycle = [{x: x, y: y}];
       }
       self.lastx = x;
     }
+
+    this.updateGraph = function() {
+      var graphData = [];
+      for (var i = 0; i < self.cycles.length; i++) {
+        graphData = graphData.concat(self.cycles[i]);
+      }
+      if (graphData.length > 1) {
+        graphData.sort(function(a, b) {
+          return a.x - b.x;
+        });
+        minY = Math.min.apply(null, graphData.map(function(sample) { return sample.y; }));
+        window.graph.series[0].data = graphData.map(function(sample) { return {x: sample.x, y: sample.y - minY}; });
+        window.graph.update();
+      }
+    }
+
+    setInterval(this.updateGraph, 100);
 
   };
 
