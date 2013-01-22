@@ -30,6 +30,19 @@ require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl
     this.updatePeriod();
   }
 
+  var setupGraph = function() {
+    var palette = new Rickshaw.Color.Palette({scheme: 'classic9'});
+    window.graph = new Rickshaw.Graph({
+      element: document.getElementById('chart'),
+      width: 400,
+      height: 200,
+      renderer: 'area',
+      stroke: true,
+      series: new Rickshaw.Series([{data: [{x: Date.now(), y: 0}, {x: Date.now() + 16.0045, y: 123}], name: "moscow"}], palette)
+    });
+    window.graph.render();
+  }
+
   var createObjects = function(board) {
     var self = this;
     board.withAnalogInput({pin:  'A0'}, function(err, AnalogInput) { 
@@ -58,6 +71,7 @@ require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl
 
   $(document).ready(function(e) {
     setupEvents();
+    setupGraph();
 
     $('#connect').click(function(e) {
       e.preventDefault();
