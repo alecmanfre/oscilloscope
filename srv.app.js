@@ -45,6 +45,14 @@ define(['kickstart', 'module', 'path', 'fs'], function (kickstart, module, path,
   srv.all('/example-walkLED.html', function(req, res) {
     res.render('example-walkLED', {jsApp: 'walkLED', active: 'examples', title: 'noduino', 'examples': examples});
   });
+
+  /** 
+   * Catch request for serving oscilloscope page
+   */
+  srv.all('/oscilloscope.html', function(req, res) {
+    res.render('oscilloscope', {jsApp: 'oscilloscope', title: 'oscilloscope', layout: null});
+  });
+
   
   return {'kickstart': kickstart, 'srv': srv};
 });
