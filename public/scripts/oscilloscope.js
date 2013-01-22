@@ -1,67 +1,58 @@
-$(document).ready(function(){
-var seriesData = [ [], [], [], [], [], [], [], [], [] ];
-var random = new Rickshaw.Fixtures.RandomData(150);
+var pv = 'scripts/vendor/';
+var pl = 'scripts/libs/';
+require(["jquery", pv + "dropdown.js", pv + "prettify.js", pl + 'Noduino.js', pl + 'Noduino.Socket.js', pl + 'Logger.HTML.js'], function($, dd, p, NoduinoObj, Connector, Logger) {
+  var Noduino = null;
 
-for (var i = 0; i < 150; i++) {
-    random.addData(seriesData);
-}
+  analogData = [];
+
+  var analogReading = function(board) {
+    board.withAnalogInput({pin:  'A0'}, function(err, AnalogInput) { 
+      AnalogInput.on('change', function(a) { 
+        var reading = a.value;
+        $('#analog-reading').text(reading);
+        analogData.push({x:Date.now(), y:reading});
+        //console.log(analogData);
+      });
+    });
+  };
+
+$(document).ready(function(e) {
+  //console.log(analogData);
+  $('#analog-reading').click(function(e) {
+    e.preventDefault();
+      
+      Noduino = new NoduinoObj({debug: true, host: 'http://localhost:8090', logger: {container: '#connection-log'}}, Connector, Logger);
+      Noduino.connect(function(err, board) {
+        analogReading(board);
+      });
+  });
 
 var palette = new Rickshaw.Color.Palette( { scheme: 'classic9' } );
 
 // instantiate our graph!
-
-var graph = new Rickshaw.Graph( {
+window.graph = new Rickshaw.Graph( {
     element: document.getElementById("chart"),
     width: 900,
     height: 500,
     renderer: 'area',
     stroke: true,
-    series: [
-        {
-            color: palette.color(),
-            data: seriesData[0],
-            name: 'Moscow'
-        }, {
-            color: palette.color(),
-            data: seriesData[1],
-            name: 'Shanghai'
-        }, {
-            color: palette.color(),
-            data: seriesData[2],
-            name: 'Amsterdam'
-        }, {
-            color: palette.color(),
-            data: seriesData[3],
-            name: 'Paris'
-        }, {
-            color: palette.color(),
-            data: seriesData[4],
-            name: 'Tokyo'
-        }, {
-            color: palette.color(),
-            data: seriesData[5],
-            name: 'London'
-        }, {
-            color: palette.color(),
-            data: seriesData[6],
-            name: 'New York'
-        }
-    ]
+    series: new Rickshaw.Series([{data: [{x: Date.now(), y: 0}], name: "moscow"}], palette)
 } );
 
-graph.render();
+window.graph.render();
 
 setInterval( function() {
-    random.addData(seriesData);
-    graph.update();
-
-}, 3000 );
-
-function addAnnotation(force) {
-    if (messages.length > 0 && (force || Math.random() >= 0.95)) {
-        annotator.add(seriesData[2][seriesData[2].length-1].x, messages.shift());
+    console.log('adding data...');
+    console.log(window.graph.series);
+    //window.graph.series.addData(analogData);
+    if (analogData.length >= 100) {
+      window.graph.series[0].data = analogData.slice(-100);
+      window.graph.update();
+      console.log('update graph');
     }
-}
 
-})
+}, 25 );
+
+});
+});
 
